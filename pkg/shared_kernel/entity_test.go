@@ -3,7 +3,7 @@ package sharedkernel_test
 import (
 	"testing"
 
-	shared "sms/pkg/shared_kernel"
+	shared "simbapkg/pkg/shared_kernel"
 
 	"github.com/stretchr/testify/assert"
 )
