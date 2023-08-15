@@ -6,11 +6,11 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"log"
+	config "simbapkg/pkg/dbconfig"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 	"golang.org/x/exp/slog"
-	config "simbapkg/pkg/dbFactory"
 )
 
 const (

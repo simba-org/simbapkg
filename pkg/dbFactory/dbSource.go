@@ -2,13 +2,14 @@ package dbFactory
 
 import (
 	"simbapkg/pkg"
+	"simbapkg/pkg/dbconfig"
 
 	"simbapkg/pkg/mysqld"
 
 	"simbapkg/pkg/postgres"
 )
 
-func GetDb(ds DataSource) (pkg.DB, error) {
+func GetDb(ds dbconfig.DataSource) (pkg.DB, error) {
 	switch ds.Type {
 	case "mysql":
 		pg, err := mysqld.NewMysqlDb(ds.Mysql)
