@@ -2,11 +2,11 @@ package mysqld
 
 import (
 	"database/sql"
+	config "github.com/Bifang-Bird/simbapkg/pkg/dbconfig"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"log"
-	config "simbapkg/pkg/dbconfig"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"

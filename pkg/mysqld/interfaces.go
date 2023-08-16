@@ -1,6 +1,6 @@
 package mysqld
 
-import "simbapkg/pkg"
+import "github.com/Bifang-Bird/simbapkg/pkg"
 
 type DBEngine interface {
 	pkg.DB

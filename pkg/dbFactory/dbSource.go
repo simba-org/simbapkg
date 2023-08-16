@@ -1,12 +1,12 @@
 package dbFactory
 
 import (
-	"simbapkg/pkg"
-	"simbapkg/pkg/dbconfig"
+	"github.com/Bifang-Bird/simbapkg/pkg"
+	"github.com/Bifang-Bird/simbapkg/pkg/dbconfig"
 
-	"simbapkg/pkg/mysqld"
+	"github.com/Bifang-Bird/simbapkg/pkg/mysqld"
 
-	"simbapkg/pkg/postgres"
+	"github.com/Bifang-Bird/simbapkg/pkg/postgres"
 )
 
 func GetDb(ds dbconfig.DataSource) (pkg.DB, error) {

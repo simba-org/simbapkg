@@ -1,4 +1,4 @@
-module simbapkg
+module github.com/Bifang-Bird/simbapkg
 
 go 1.20
 
