@@ -30,7 +30,6 @@ type mysqldb struct {
 var _ DBEngine = (*mysqldb)(nil)
 
 func NewMysqlDb(mysqlCfg config.Mysql) (DBEngine, error) {
-	slog.Info("CONN", "connect string", mysqlCfg.URL)
 	pg := &mysqldb{
 		connAttempts: _defaultConnAttempts,
 		connTimeout:  _defaultConnTimeout,
