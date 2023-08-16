@@ -86,7 +86,10 @@ func (p *mysqldb) GetDB() *sql.DB {
 
 func (p *mysqldb) Close() {
 	if p.db != nil {
-		p.db.Close()
+		err := p.db.Close()
+		if err != nil {
+			return
+		}
 	}
 }
 
