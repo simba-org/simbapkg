@@ -12,7 +12,8 @@ package dbconfig
 import configs "codeup.aliyun.com/6145b2b428003bdc3daa97c8/go-simba/go-simba-pkg.git/config"
 
 type Config struct {
-	DataSource `yaml:"datasource"`
+	DataSource  `yaml:"datasource"`
+	LoadBalance `yaml:"loadBalance"`
 }
 
 type DataSource struct {
@@ -31,3 +32,19 @@ type Mysql struct {
 	MaxIdleConns int                  `env-required:"true" yaml:"max_idle_conns" env:"MAX_IDLE_CONNS"`
 	URL          configs.DBConnString `env-required:"true" yaml:"url" env:"URL"`
 }
+
+type (
+	LoadBalance struct {
+		Specify    bool   `yaml:"specify" env:"SPECIFY"`
+		Channel    string `env-required:"true" yaml:"channel" env:"CHANNEL"`
+		SelectMode `env-required:"true" yaml:"selectMode" env:"SELECT_MODE"`
+	}
+	SelectMode struct {
+		Strategy int       `yaml:"strategy" env:"STRATEGY"`
+		Weight   []*Weight `env-required:"true" yaml:"weight" env:"WEIGHT"`
+	}
+	Weight struct {
+		Chan  string `env-required:"true" yaml:"chan" env:"CHAN"`
+		Value string `env-required:"true" yaml:"value" env:"VALUE"`
+	}
+)

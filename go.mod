@@ -10,6 +10,9 @@ require (
 	golang.org/x/exp v0.0.0-20230811145659-89c5cff77bcb
 	gorm.io/driver/mysql v1.5.1
 	gorm.io/gorm v1.25.3
+	google.golang.org/grpc v1.54.0
+
+
 )
 
 require (
