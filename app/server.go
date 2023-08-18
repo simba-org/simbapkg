@@ -22,7 +22,7 @@ import (
 	"time"
 )
 
-type LoadBalanceHandler func(cfg *configs.Config) balan.LoadBalance
+type LoadBalanceHandler func(cfg *configs.LoadBalance) balan.LoadBalance
 
 type InitGrpcHandler func(ctx context.Context) *grpc.Server
 
@@ -58,22 +58,22 @@ func (s *Server) SetLoadBalanceHandler(handle LoadBalanceHandler) *Server {
 //	@Description: 支付渠道负载均衡初始化
 //	@param cfg
 //	@return balan.LoadBalance
-func InitLoadBalanceStrategy(cfg *configs.Config) balan.LoadBalance {
+func InitLoadBalanceStrategy(cfg *configs.LoadBalance) balan.LoadBalance {
 	//支付渠道相关的配置
 	loadBalance := balan.LoadBalanceFactory(10)
 	//支付渠道非指定时，需要初始化支付渠道的选举策略
-	if cfg.LoadBalance.Specify {
+	if cfg.Specify {
 		loadBalance = balan.LoadBalanceFactory(balan.LbConsistentHash)
-		err := loadBalance.Add(cfg.LoadBalance.Channel)
+		err := loadBalance.Add(cfg.Channel)
 		if err != nil {
 			return nil
 		}
 	} else {
-		if cfg.LoadBalance.SelectMode.Strategy > 2 {
-			slog.Error("failed init payment channel,selectMode=", cfg.LoadBalance.SelectMode)
+		if cfg.SelectMode.Strategy > 2 {
+			slog.Error("failed init payment channel,selectMode=", cfg.SelectMode)
 		} else {
-			loadBalance = balan.LoadBalanceFactory(balan.LbType(cfg.LoadBalance.SelectMode.Strategy))
-			for _, item := range cfg.LoadBalance.SelectMode.Weight {
+			loadBalance = balan.LoadBalanceFactory(balan.LbType(cfg.SelectMode.Strategy))
+			for _, item := range cfg.SelectMode.Weight {
 				err := loadBalance.Add(item.Chan, item.Value)
 				if err != nil {
 					return nil
@@ -81,7 +81,7 @@ func InitLoadBalanceStrategy(cfg *configs.Config) balan.LoadBalance {
 			}
 		}
 	}
-	slog.Info("负载策略初始化", cfg.LoadBalance.SelectMode)
+	slog.Info("负载策略初始化", cfg.SelectMode)
 	return loadBalance
 }
 
