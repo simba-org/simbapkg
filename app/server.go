@@ -22,6 +22,8 @@ import (
 	"time"
 )
 
+type LoadBalanceHandler func(cfg *configs.Config) balan.LoadBalance
+
 type InitGrpcHandler func(ctx context.Context) *grpc.Server
 
 type BandingPortHandler func(cfg *config.HTTP, cancel context.CancelFunc) net.Listener
@@ -29,6 +31,7 @@ type BandingPortHandler func(cfg *config.HTTP, cancel context.CancelFunc) net.Li
 type Server struct {
 	InitGrpcHandler    InitGrpcHandler
 	BandingPortHandler BandingPortHandler
+	LoadBalanceHandler LoadBalanceHandler
 }
 
 func NewServer() *Server {
@@ -45,12 +48,17 @@ func (s *Server) SetBandingPortHandler(handle BandingPortHandler) *Server {
 	return s
 }
 
+func (s *Server) SetLoadBalanceHandler(handle LoadBalanceHandler) *Server {
+	s.LoadBalanceHandler = handle
+	return s
+}
+
 // PayChannelLoadBalance
 //
 //	@Description: 支付渠道负载均衡初始化
 //	@param cfg
 //	@return balan.LoadBalance
-func InitPayChannelLoadBalance(cfg *configs.Config) balan.LoadBalance {
+func InitLoadBalanceStrategy(cfg *configs.Config) balan.LoadBalance {
 	//支付渠道相关的配置
 	loadBalance := balan.LoadBalanceFactory(10)
 	//支付渠道非指定时，需要初始化支付渠道的选举策略
@@ -73,7 +81,7 @@ func InitPayChannelLoadBalance(cfg *configs.Config) balan.LoadBalance {
 			}
 		}
 	}
-	slog.Info("支付方式负载策略初始化", cfg.LoadBalance.SelectMode)
+	slog.Info("负载策略初始化", cfg.LoadBalance.SelectMode)
 	return loadBalance
 }
 
