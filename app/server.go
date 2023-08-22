@@ -16,6 +16,7 @@ import (
 	"github.com/Bifang-Bird/simbapkg/balan"
 	configs "github.com/Bifang-Bird/simbapkg/pkg/dbconfig"
 	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 	"golang.org/x/exp/slog"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/keepalive"
@@ -145,8 +146,28 @@ func InitLogger(cfg *config.Log) {
 	zapConfig.Encoding = "json"
 	// 设置日志输出位置（可以是文件、标准输出等）
 	zapConfig.OutputPaths = []string{"stdout"} // 输出到标准输出
+
+	zapConfig.EncoderConfig = zapcore.EncoderConfig{
+		MessageKey:     "message",
+		TimeKey:        "timestamp",
+		NameKey:        "logger",
+		CallerKey:      "caller",
+		FunctionKey:    "function",
+		StacktraceKey:  "",
+		SkipLineEnding: false,
+		LineEnding:     "",
+		EncodeLevel:    zapcore.CapitalLevelEncoder,
+		EncodeTime:     customTimeEncoder,
+		EncodeDuration: zapcore.SecondsDurationEncoder,
+		EncodeCaller:   zapcore.ShortCallerEncoder,
+	}
+
 	Logger, err = zapConfig.Build()
 	if err != nil {
 		panic("Failed to initialize logger")
 	}
+}
+
+func customTimeEncoder(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
+	enc.AppendString(t.Format("2006-01-02 15:04:05.000"))
 }
