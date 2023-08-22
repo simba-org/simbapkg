@@ -8,10 +8,9 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/stretchr/testify v1.8.4
 	golang.org/x/exp v0.0.0-20230811145659-89c5cff77bcb
+	google.golang.org/grpc v1.54.0
 	gorm.io/driver/mysql v1.5.1
 	gorm.io/gorm v1.25.3
-	google.golang.org/grpc v1.54.0
-
 
 )
 
@@ -20,5 +19,7 @@ require (
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
+	go.uber.org/multierr v1.10.0 // indirect
+	go.uber.org/zap v1.25.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

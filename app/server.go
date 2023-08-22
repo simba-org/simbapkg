@@ -15,11 +15,17 @@ import (
 	"fmt"
 	"github.com/Bifang-Bird/simbapkg/balan"
 	configs "github.com/Bifang-Bird/simbapkg/pkg/dbconfig"
+	"go.uber.org/zap"
 	"golang.org/x/exp/slog"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/keepalive"
 	"net"
+	"strings"
 	"time"
+)
+
+var (
+	Logger *zap.Logger
 )
 
 type LoadBalanceHandler func(cfg *configs.LoadBalance) balan.LoadBalance
@@ -28,10 +34,13 @@ type InitGrpcHandler func(ctx context.Context) *grpc.Server
 
 type BandingPortHandler func(cfg *config.HTTP, cancel context.CancelFunc) net.Listener
 
+type InitLogHandler func(cfg *config.Log)
+
 type Server struct {
 	InitGrpcHandler    InitGrpcHandler
 	BandingPortHandler BandingPortHandler
 	LoadBalanceHandler LoadBalanceHandler
+	InitLogHandler     InitLogHandler
 }
 
 func NewServer() *Server {
@@ -42,14 +51,16 @@ func (s *Server) SetInitGrpcHandler(handle InitGrpcHandler) *Server {
 	s.InitGrpcHandler = handle
 	return s
 }
-
 func (s *Server) SetBandingPortHandler(handle BandingPortHandler) *Server {
 	s.BandingPortHandler = handle
 	return s
 }
-
 func (s *Server) SetLoadBalanceHandler(handle LoadBalanceHandler) *Server {
 	s.LoadBalanceHandler = handle
+	return s
+}
+func (s *Server) SetInitLogHandler(handle InitLogHandler) *Server {
+	s.InitLogHandler = handle
 	return s
 }
 
@@ -109,4 +120,33 @@ func BandingPort(cfg *config.HTTP, cancel context.CancelFunc) net.Listener {
 	}
 	slog.Info("🌏 start server...", "address", address)
 	return l
+}
+
+func InitLogger(cfg *config.Log) {
+	var err error
+	// 定义配置项
+	zapConfig := zap.NewProductionConfig()
+	var bugLevel = zap.InfoLevel
+	if strings.EqualFold(cfg.Level, "debug") {
+		bugLevel = zap.DebugLevel
+	}
+	if strings.EqualFold(cfg.Level, "warn") {
+		bugLevel = zap.WarnLevel
+	}
+	if strings.EqualFold(cfg.Level, "error") {
+		bugLevel = zap.ErrorLevel
+	}
+	if strings.EqualFold(cfg.Level, "info") {
+		bugLevel = zap.InfoLevel
+	}
+	// 设置日志级别
+	zapConfig.Level = zap.NewAtomicLevelAt(bugLevel) // 设置为 Debug 级别
+	// 设置日志输出格式为 JSON 格式
+	zapConfig.Encoding = "json"
+	// 设置日志输出位置（可以是文件、标准输出等）
+	zapConfig.OutputPaths = []string{"stdout"} // 输出到标准输出
+	Logger, err = zapConfig.Build()
+	if err != nil {
+		panic("Failed to initialize logger")
+	}
 }
