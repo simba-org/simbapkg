@@ -48,3 +48,9 @@ type (
 		Value string `env-required:"true" yaml:"value" env:"VALUE"`
 	}
 )
+
+type MqConfig struct {
+	ExchangeName    string
+	BindingKey      string
+	MessageTypeName string
+}
