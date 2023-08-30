@@ -47,14 +47,14 @@ type (
 )
 
 type DataSource struct {
-	Type  string `env-required:"true" yaml:"type" env:"TYPE"`
-	Mysql Mysql  `env-required:"true" yaml:"mysql" env:"MYSQL"`
-	PG    PG     `env-required:"false" ,yaml:"postgres" ,env:"POSTGRES"`
+	Type  string `yaml:"type" ,env-required:"true" ,env:"TYPE"`
+	Mysql Mysql  `yaml:"mysql" ,env-required:"true" ,env:"MYSQL"`
+	PG    PG     `yaml:"postgres" ,env-required:"false" ,env:"POSTGRES"`
 }
 
 type PG struct {
-	PoolMax int                  `env-required:"false" ,yaml:"pool_max" ,env:"PG_POOL_MAX"`
-	DsnURL  configs.DBConnString `env-required:"false" ,yaml:"dsn_url" ,env:"PG_DSN_URL"`
+	PoolMax int                  `yaml:"pool_max" ,env-required:"false" ,env:"PG_POOL_MAX"`
+	DsnURL  configs.DBConnString `yaml:"dsn_url" ,env-required:"false" ,env:"PG_DSN_URL"`
 }
 
 type Mysql struct {
