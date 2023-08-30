@@ -14,17 +14,47 @@ import configs "codeup.aliyun.com/6145b2b428003bdc3daa97c8/go-simba/go-simba-pkg
 type Config struct {
 	DataSource  `yaml:"datasource"`
 	LoadBalance `yaml:"loadBalance"`
+	RabbitMQ    `yaml:"rabbitmq" ,env-required:"false" ,env:"RABBITMQ"`
 }
+
+type (
+	RabbitMQ struct {
+		URL      string            `yaml:"url" ,env-required:"false" ,env:"RABBITMQ_URL"`
+		Publish  []PublishProfile  `yaml:"publish" ,env-required:"false" ,env:"PUBLISH"`
+		Consumer []ConsumerProfile `yaml:"consumer" ,env-required:"false" ,env:"CONSUMER"`
+	}
+	PublishProfile struct {
+		Type string      `env-required:"true" yaml:"type" env:"TYPE"`
+		Body PublishBody `env-required:"true" yaml:"body" env:"BODY"`
+	}
+
+	PublishBody struct {
+		ExchangeName    string `env-required:"true" yaml:"exchangeName" env:"EXCHANGE_NAME"`
+		BindingKey      string `env-required:"true" yaml:"bindingKey" env:"BINDING_KEY"`
+		MessageTypeName string `env-required:"true" yaml:"messageTypeName" env:"MESSAGE_TYPE_NAME"`
+	}
+	ConsumerProfile struct {
+		Type string       `env-required:"true" yaml:"type" env:"TYPE"`
+		Body ConsumerBody `env-required:"true" yaml:"body" env:"BODY"`
+	}
+
+	ConsumerBody struct {
+		ExchangeName string `env-required:"true" yaml:"exchangeName" env:"EXCHANGE_NAME"`
+		BindingKey   string `env-required:"true" yaml:"bindingKey" env:"BINDING_KEY"`
+		ConsumerTag  string `env-required:"true" yaml:"consumerTag" env:"CONSUMER_TAG"`
+		QueueName    string `env-required:"true" yaml:"queueName" env:"QUEUE_NAME"`
+	}
+)
 
 type DataSource struct {
 	Type  string `env-required:"true" yaml:"type" env:"TYPE"`
 	Mysql Mysql  `env-required:"true" yaml:"mysql" env:"MYSQL"`
-	PG    PG     `env-required:"true" yaml:"postgres" env:"POSTGRES"`
+	PG    PG     `env-required:"false" ,yaml:"postgres" ,env:"POSTGRES"`
 }
 
 type PG struct {
-	PoolMax int                  `env-required:"true" yaml:"pool_max" env:"PG_POOL_MAX"`
-	DsnURL  configs.DBConnString `env-required:"true" yaml:"dsn_url" env:"PG_DSN_URL"`
+	PoolMax int                  `env-required:"false" ,yaml:"pool_max" ,env:"PG_POOL_MAX"`
+	DsnURL  configs.DBConnString `env-required:"false" ,yaml:"dsn_url" ,env:"PG_DSN_URL"`
 }
 
 type Mysql struct {
