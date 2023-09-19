@@ -41,7 +41,7 @@ func NewMysqlDb(mysqlCfg config.Mysql) (DBEngine, error) {
 	for pg.connAttempts > 0 {
 		//连接MYSQL, 获得DB类型实例，用于后面的数据库读写操作。
 		_db, err = gorm.Open(mysql.Open(string(mysqlCfg.URL)), &gorm.Config{
-			Logger: logger.Default.LogMode(logger.Info),
+			Logger: logger.Default.LogMode(logger.Warn),
 		})
 		//连接数据库报错，重新连接
 		if err != nil {
