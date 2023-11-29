@@ -1,11 +1,10 @@
 package publish
 
 import (
+	"codeup.aliyun.com/6145b2b428003bdc3daa97c8/go-simba/go-simba-pkg.git/rabbitmq/publisher"
 	"context"
 	"github.com/Bifang-Bird/simbapkg/pkg"
-	"github.com/Bifang-Bird/simbapkg/pkg/dbconfig"
-
-	"codeup.aliyun.com/6145b2b428003bdc3daa97c8/go-simba/go-simba-pkg.git/rabbitmq/publisher"
+	config "github.com/Bifang-Bird/simbapkg/pkg/config"
 
 	"github.com/google/wire"
 )
@@ -32,7 +31,7 @@ func (p *MqPublisher) Configure(opts ...publisher.Option) {
 	p.pub.Configure(opts...)
 }
 
-func (p *MqPublisher) Publish(ctx context.Context, body []byte, contentType string, rabbitmqCFG dbconfig.MqConfig) error {
+func (p *MqPublisher) Publish(ctx context.Context, body []byte, contentType string, rabbitmqCFG config.MqConfig) error {
 	p.Configure(
 		publisher.ExchangeName(rabbitmqCFG.ExchangeName),
 		publisher.BindingKey(rabbitmqCFG.BindingKey),

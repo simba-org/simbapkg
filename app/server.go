@@ -15,7 +15,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/Bifang-Bird/simbapkg/balan"
-	configs "github.com/Bifang-Bird/simbapkg/pkg/dbconfig"
+	configs "github.com/Bifang-Bird/simbapkg/pkg/config"
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
