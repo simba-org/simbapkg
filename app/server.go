@@ -11,10 +11,12 @@ package app
 
 import (
 	config "codeup.aliyun.com/6145b2b428003bdc3daa97c8/go-simba/go-simba-pkg.git/config"
+	middleware2 "codeup.aliyun.com/6145b2b428003bdc3daa97c8/go-simba/go-simba-pkg.git/grpc/middleware"
 	"context"
 	"fmt"
 	"github.com/Bifang-Bird/simbapkg/balan"
 	configs "github.com/Bifang-Bird/simbapkg/pkg/dbconfig"
+	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"golang.org/x/exp/slog"
@@ -106,7 +108,12 @@ func InitGrpcServer(ctx context.Context) *grpc.Server {
 		grpc.KeepaliveEnforcementPolicy(keepalive.EnforcementPolicy{
 			MinTime:             20 * time.Second,
 			PermitWithoutStream: true,
-		}))
+		}),
+		grpc_middleware.WithUnaryServerChain(
+			middleware2.GrpcContext(),
+			middleware2.GrpcRecover(),
+			middleware2.GrpcLogger(),
+		))
 	slog.Info("GRPC SERVER 初始化完成")
 	return server
 }

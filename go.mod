@@ -3,10 +3,11 @@ module github.com/Bifang-Bird/simbapkg
 go 1.20
 
 require (
-	codeup.aliyun.com/6145b2b428003bdc3daa97c8/go-simba/go-simba-pkg.git v0.0.8-0.20231113084035-179dd1599e95
+	codeup.aliyun.com/6145b2b428003bdc3daa97c8/go-simba/go-simba-pkg.git v0.0.8-dev.0.20231129064849-877186e4aa3f
 	github.com/go-sql-driver/mysql v1.7.1
 	github.com/google/uuid v1.3.0
 	github.com/google/wire v0.5.0
+	github.com/grpc-ecosystem/go-grpc-middleware v1.4.0
 	github.com/stretchr/testify v1.8.4
 	go.uber.org/zap v1.25.0
 	golang.org/x/exp v0.0.0-20230811145659-89c5cff77bcb

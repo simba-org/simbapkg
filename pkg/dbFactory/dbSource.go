@@ -3,9 +3,7 @@ package dbFactory
 import (
 	"github.com/Bifang-Bird/simbapkg/pkg"
 	"github.com/Bifang-Bird/simbapkg/pkg/dbconfig"
-
 	"github.com/Bifang-Bird/simbapkg/pkg/mysqld"
-
 	"github.com/Bifang-Bird/simbapkg/pkg/postgres"
 )
 
