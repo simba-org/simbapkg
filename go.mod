@@ -17,7 +17,7 @@ require (
 
 )
 
-//replace codeup.aliyun.com/6145b2b428003bdc3daa97c8/go-simba/go-simba-pkg.git => /Users/junwang/Documents/work/go-simba-pkg
+replace codeup.aliyun.com/6145b2b428003bdc3daa97c8/go-simba/go-simba-pkg.git => /Users/junwang/Documents/work/go-simba-pkg
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
