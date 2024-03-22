@@ -114,6 +114,12 @@ func InitGrpcServer(ctx context.Context) *grpc.Server {
 			middleware2.GrpcRecover(),
 			middleware2.GrpcLogger(),
 		))
+
+	go func() {
+		defer server.GracefulStop()
+		<-ctx.Done()
+	}()
+
 	slog.Info("GRPC SERVER 初始化完成")
 	return server
 }
