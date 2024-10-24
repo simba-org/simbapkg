@@ -10,7 +10,7 @@ type (
 	DomainEvent interface {
 		CreateAt() time.Time
 		Identity() string
-		InitHandler(Handler)
-		Handle(ctx context.Context) (interface{}, error)
+		InitHandler(Handler)                             // 初始化事件处理函数
+		Handle(ctx context.Context) (interface{}, error) // 调用事件处理函数
 	}
 )
