@@ -6,7 +6,7 @@ type AggregateRoot struct {
 
 // ApplyDomain
 //
-//	@Description: 绑定事件，需要去重
+//	@Description: 绑定事件，事件去重
 //	@receiver ar
 //	@param e
 func (ar *AggregateRoot) ApplyDomain(e DomainEvent) {
@@ -17,6 +17,15 @@ func (ar *AggregateRoot) ApplyDomain(e DomainEvent) {
 			return
 		}
 	}
+	ar.domainEvents = append(ar.domainEvents, e)
+}
+
+// ApplyDomain
+//
+//	@Description: 绑定事件，包含重复事件
+//	@receiver ar
+//	@param e
+func (ar *AggregateRoot) ApplyDomainHasDuplicate(e DomainEvent) {
 	ar.domainEvents = append(ar.domainEvents, e)
 }
 
