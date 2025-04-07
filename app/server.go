@@ -12,10 +12,13 @@ package app
 import (
 	config "codeup.aliyun.com/6145b2b428003bdc3daa97c8/go-simba/go-simba-pkg.git/config"
 	middleware2 "codeup.aliyun.com/6145b2b428003bdc3daa97c8/go-simba/go-simba-pkg.git/grpc/middleware"
+	"codeup.aliyun.com/6145b2b428003bdc3daa97c8/go-simba/go-simba-pkg.git/redisutil"
+	pkgUtils "codeup.aliyun.com/6145b2b428003bdc3daa97c8/go-simba/go-simba-pkg.git/utils"
 	"context"
 	"fmt"
 	"github.com/Bifang-Bird/simbapkg/balan"
 	configs "github.com/Bifang-Bird/simbapkg/pkg/config"
+	"github.com/google/uuid"
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -23,7 +26,10 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/keepalive"
 	"net"
+	"os"
+	"os/signal"
 	"strings"
+	"syscall"
 	"time"
 )
 
@@ -35,7 +41,7 @@ type LoadBalanceHandler func(cfg *configs.LoadBalance) balan.LoadBalance
 
 type InitGrpcHandler func(ctx context.Context) *grpc.Server
 
-type BandingPortHandler func(cfg *config.HTTP, cancel context.CancelFunc) net.Listener
+type BandingPortHandler func(cfg *config.HTTP, grpc *grpc.Server, cancel context.CancelFunc) net.Listener
 
 type InitLogHandler func(cfg *config.Log)
 
@@ -65,6 +71,51 @@ func (s *Server) SetLoadBalanceHandler(handle LoadBalanceHandler) *Server {
 func (s *Server) SetInitLogHandler(handle InitLogHandler) *Server {
 	s.InitLogHandler = handle
 	return s
+}
+
+func (s *Server) SetInitSonyFlake() *Server {
+	//雪花算法实例初始化-未来封装
+	machineId, _ := getWorkerId()
+	pkgUtils.InitSonyFlake(uint64(machineId))
+	return s
+}
+
+func (s *Server) ConnectToRedis(redisCfg config.Redis) {
+	redisutil.InitRedis(redisCfg)
+}
+
+func (s *Server) RunCleanUp(ctx context.Context, cleanup func()) {
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
+	select {
+	case v := <-quit:
+		cleanup()
+		slog.Info("signal.Notify", v)
+	case done := <-ctx.Done():
+		cleanup()
+		slog.Info("ctx.Done", done)
+	}
+}
+
+func getWorkerId() (int64, error) {
+	addrs, err := net.InterfaceAddrs()
+	if err != nil {
+		return -1, err
+	}
+	for _, addr := range addrs {
+		if ipnet, ok := addr.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
+			ip := ipnet.IP.To4()
+			if ip != nil {
+				lastOctet := ip[3]
+				return int64(lastOctet), nil
+			}
+		}
+	}
+	newUUID, err := uuid.NewUUID()
+	if err != nil {
+		return 0, err
+	}
+	return int64(newUUID.ID()), nil
 }
 
 // PayChannelLoadBalance
@@ -124,12 +175,18 @@ func InitGrpcServer(ctx context.Context) *grpc.Server {
 	return server
 }
 
-func BandingPort(cfg *config.HTTP, cancel context.CancelFunc) net.Listener {
+func BandingPort(cfg *config.HTTP, grpcServer *grpc.Server, cancel context.CancelFunc) net.Listener {
 	address := fmt.Sprintf("%s:%d", cfg.Host, cfg.Port)
 	network := "tcp"
 	l, err := net.Listen(network, address)
 	if err != nil {
 		slog.Error("failed to listen to address", err, "network", network, "address", address)
+		cancel()
+	}
+
+	err = grpcServer.Serve(l)
+	if err != nil {
+		slog.Error("failed start gRPC server", err, "network", "tcp", "address", address)
 		cancel()
 	}
 	slog.Info("🌏 start server...", "address", address)
