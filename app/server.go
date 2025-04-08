@@ -184,11 +184,6 @@ func BandingPort(cfg *config.HTTP, grpcServer *grpc.Server, cancel context.Cance
 		cancel()
 	}
 
-	err = grpcServer.Serve(l)
-	if err != nil {
-		slog.Error("failed start gRPC server", err, "network", "tcp", "address", address)
-		cancel()
-	}
 	slog.Info("🌏 start server...", "address", address)
 	return l
 }
