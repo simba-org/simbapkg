@@ -151,8 +151,10 @@ func InitGrpcServer(ctx context.Context) *grpc.Server {
 		))
 
 	go func() {
-		defer server.GracefulStop()
 		<-ctx.Done()
+		slog.Info("GRPC服务优雅关闭开始")
+		server.GracefulStop()
+		slog.Info("GRPC服务已关闭")
 	}()
 
 	slog.Info("GRPC SERVER 初始化完成")
