@@ -26,10 +26,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/keepalive"
 	"net"
-	"os"
-	"os/signal"
 	"strings"
-	"syscall"
 	"time"
 )
 
@@ -82,19 +79,6 @@ func (s *Server) SetInitSonyFlake() *Server {
 
 func (s *Server) ConnectToRedis(redisCfg config.Redis) {
 	redisutil.InitRedis(redisCfg)
-}
-
-func (s *Server) RunCleanUp(ctx context.Context, cleanup func()) {
-	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
-	select {
-	case v := <-quit:
-		cleanup()
-		slog.Info("signal.Notify", v)
-	case done := <-ctx.Done():
-		cleanup()
-		slog.Info("ctx.Done", done)
-	}
 }
 
 func getWorkerId() (int64, error) {
