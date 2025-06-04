@@ -7,6 +7,7 @@ import (
 
 type (
 	Handler     func(context.Context, DomainEvent) (interface{}, error)
+	Handlers    []Handler
 	DomainEvent interface {
 		CreateAt() time.Time
 		Identity() string
