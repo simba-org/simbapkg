@@ -137,11 +137,11 @@ func InitLoadBalanceStrategy(cfg *configs.LoadBalance) balan.LoadBalance {
 func InitGrpcServer(ctx context.Context) *grpc.Server {
 	server := grpc.NewServer(grpc.MaxConcurrentStreams(1000),
 		grpc.KeepaliveParams(keepalive.ServerParameters{
-			Time:    20 * time.Second, // 每隔10秒ping一次客户端
-			Timeout: 5 * time.Second,  // 等待5秒ping再次确认，则认为连接已死
+			Time:    10 * time.Second, // 缩短心跳间隔，更快检测连接状态 [1](@ref)
+			Timeout: 3 * time.Second,  // 减少旧连接存活时间
 		}),
 		grpc.KeepaliveEnforcementPolicy(keepalive.EnforcementPolicy{
-			MinTime:             20 * time.Second,
+			MinTime:             10 * time.Second, // 最小存活时间
 			PermitWithoutStream: true,
 		}),
 		grpc_middleware.WithUnaryServerChain(
