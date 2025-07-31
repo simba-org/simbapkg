@@ -102,7 +102,7 @@ func getWorkerId() (int64, error) {
 	return int64(newUUID.ID()), nil
 }
 
-// PayChannelLoadBalance
+// InitLoadBalanceStrategy PayChannelLoadBalance
 //
 //	@Description: 支付渠道负载均衡初始化
 //	@param cfg
